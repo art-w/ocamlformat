@@ -1,0 +1,47 @@
+name: Build with OxCaml
+
+on:
+  push:
+    branches:
+      - 5.2.0minus-8
+  pull_request:
+    branches:
+      - 5.2.0minus-8
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        ocaml-compiler:
+          - 5.2.0+flambda2
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up OxCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.2.0+flambda2
+          opam-repositories:
+            with-extensions: "git+https://github.com/janestreet/opam-repository.git#with-extensions"
+            default: "git+https://github.com/ocaml/opam-repository.git"
+
+      - name: Opam dependencies
+        run: opam install --deps-only -t .
+
+      - name: Self-formatting test
+        run: opam exec -- dune build @fmt
+
+      - name: Build
+        run: |
+          opam exec -- dune subst
+          opam exec -- dune build -p ocamlformat-lib,ocamlformat
+
+      - name: Runtest
+        run: opam exec -- dune runtest
+
+      - name: Check manpages
+        run: opam exec -- dune build @gen_manpage --auto-promote
