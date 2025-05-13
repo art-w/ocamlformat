@@ -21,13 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up OxCaml
+      - name: Set up OxCaml ${{ matrix.ocaml-compiler }}
         uses: ocaml/setup-ocaml@v3
         with:
-          ocaml-compiler: 5.2.0+flambda2
-          opam-repositories:
-            with-extensions: "git+https://github.com/janestreet/opam-repository.git#with-extensions"
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          opam-repositories: |
             default: "git+https://github.com/ocaml/opam-repository.git"
+            with-extensions: "git+https://github.com/janestreet/opam-repository.git#with-extensions"
 
       - name: Opam dependencies
         run: opam install --deps-only -t .
