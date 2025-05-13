@@ -26,8 +26,8 @@ jobs:
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
           opam-repositories: |
-            default: "git+https://github.com/ocaml/opam-repository.git"
             with-extensions: "git+https://github.com/janestreet/opam-repository.git#with-extensions"
+            default: "git+https://github.com/ocaml/opam-repository.git"
 
       - name: Opam dependencies
         run: opam install --deps-only -t .
